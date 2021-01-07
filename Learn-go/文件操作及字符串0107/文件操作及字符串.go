@@ -164,13 +164,33 @@ func main() {
 	CopyFile(srcfilename, dstfilename)
 
 }*/
-func main(){
+func main() {
 	// str:="2021-1-7"
 	// s:=strings.Split(str,"-")
 	// fmt.Printf("%s年%s月%s日",s[0],s[1],s[2])
-	var str string
-	//浮点型转换成字符串，'f'表示打印格式以小数表示，3是小数点位数，64表示以float64表示
-	str=strconv.FormatFloat(3.14, 'f', 3, 64)  
-	fmt.Println(str)  //3.140
-}
+	// var str string
+	// //浮点型转换成字符串，'f'表示打印格式以小数表示，3是小数点位数，64表示以float64表示
+	// str=strconv.FormatFloat(3.14, 'f', 3, 64)
+	// fmt.Println(str)  //3.140
 
+	// var flag bool
+	// var err error
+	// //字符串转换成bool型
+	// flag, err = strconv.ParseBool("true")
+	// if err == nil {
+	// 	fmt.Print(flag)
+	// } else {
+	// 	fmt.Print(err)
+	// }
+
+	// //字符串转整型
+	// a, _ := strconv.Atoi("123")
+	// fmt.Print(a)
+	//字符串转换成浮点型
+	f, err := strconv.ParseFloat("3.14", 64)
+	if err == nil {
+		fmt.Print(f)
+	} else {
+		fmt.Print(err)
+	}
+}
