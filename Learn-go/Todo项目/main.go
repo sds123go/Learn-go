@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 	"time"
@@ -18,13 +17,13 @@ import (
 // }
 type UserTodo struct {
 	gorm.Model
-	UserID              string    `gorm:"userid;size:50;not null;"`        //用户ID
-	UserTodoName        string    `gorm:"usertodoname;size:50;not null;"`  //用户Todo Name
-	UserTodoTitle       string    `gorm:"usertodotitle;size:50;not null;"` //用户Todo的标题
-	UserTodoDescription string    `gorm:"description;size:200;not null;"`  //用户Todo的描述
-	UserTodoDueTime     time.Time `gorm:"duetime"`                         //用户Todo截止时间
-	UserTodoRemindTime  time.Time `gorm:"remindtime"`                      //用户Todo提前多久通知
-	Status              bool      `gorm: "status"`                         //用户Todo状态
+	UserID              string    `gorm:"column:userid;size:50;not null;"`        //用户ID
+	UserTodoName        string    `gorm:"column:usertodoname;size:50;not null;"`  //用户Todo Name
+	UserTodoTitle       string    `gorm:"column:usertodotitle;size:50;not null;"` //用户Todo的标题
+	UserTodoDescription string    `gorm:"column:description;size:200;not null;"`  //用户Todo的描述
+	UserTodoDueTime     time.Time `gorm:"column:duetime"`                         //用户Todo截止时间
+	UserTodoRemindTime  time.Time `gorm:"column:remindtime"`                      //用户Todo提前多久通知
+	Status              bool      `gorm: "column:status"`                         //用户Todo状态
 }
 
 var db *gorm.DB
@@ -41,10 +40,10 @@ func init() {
 
 //增加一个Todo
 func addTodo(c *gin.Context) {
-	loc, _ := time.LoadLocation("Europe/Berlin")
-	duetime, _ := time.ParseInLocation("2000-Jan-01", c.PostForm("duetime"), loc)
-	remindtime, _ := time.ParseInLocation("2000-Jan-01", c.PostForm("remindtime"), loc)
-	fmt.Print(remindtime)
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	duetime, _ := time.ParseInLocation("2006-Jan-02", c.PostForm("duetime"), loc)
+	remindtime, _ := time.ParseInLocation("2006-Jan-02", c.PostForm("remindtime"), loc)
+
 	status, err := strconv.ParseBool(c.PostForm("status"))
 	if err != nil {
 		panic("转换错误！")
@@ -80,7 +79,7 @@ func fetchOneTodo(c *gin.Context) {
 	var todo UserTodo
 	//var _todo UserTodo
 	todoid := c.Param("userid")
-	db.Where("user_id = ?", todoid).First(&todo)
+	db.Where("userid = ?", todoid).First(&todo)
 
 	if todo.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "没有数据，取不出来！！"})
@@ -94,13 +93,14 @@ func fetchOneTodo(c *gin.Context) {
 func updateTodo(c *gin.Context) {
 	var todo UserTodo
 	todoid := c.Param("userid")
-	db.Where("user_id = ?", todoid).First(&todo)
+	db.Where("userid = ?", todoid).First(&todo)
 	if todo.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "没有数据，请添加后在更新！！"})
 		return
 	}
-	duetime, _ := time.Parse("2000-Jan-01", c.PostForm("duetime"))
-	remindtime, _ := time.Parse("2000-Jan-01", c.PostForm("remindtime"))
+	loc, _ := time.LoadLocation("Asia/Shanghai")
+	duetime, _ := time.ParseInLocation("2006-Jan-02", c.PostForm("duetime"), loc)
+	remindtime, _ := time.ParseInLocation("2006-Jan-02", c.PostForm("remindtime"), loc)
 	status, err := strconv.ParseBool(c.PostForm("status"))
 	if err != nil {
 		panic("转换错误！")
@@ -115,7 +115,7 @@ func updateTodo(c *gin.Context) {
 func deleteTodo(c *gin.Context) {
 	var todo UserTodo
 	todoid := c.Param("userid")
-	db.Where("user_id = ?", todoid).First(&todo)
+	db.Where("userid = ?", todoid).First(&todo)
 	if todo.ID == 0 {
 		c.JSON(http.StatusNotFound, gin.H{"status": http.StatusNotFound, "message": "没有数据，请添加后再删除！！"})
 		return
